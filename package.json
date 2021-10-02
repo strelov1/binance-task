@@ -1,0 +1,23 @@
+{
+  "name": "binance-task",
+  "version": "1.0.0",
+  "description": "Binance test task",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strelov1/binance-task.git"
+  },
+  "author": "Ilya Strelov (strelov1@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/strelov1/binance-task/issues"
+  },
+  "homepage": "https://github.com/strelov1/binance-task#readme",
+  "dependencies": {
+    "axios": "^0.22.0",
+    "ws": "^8.2.2"
+  }
+}

@@ -1,21 +1,64 @@
-class Balance {
-    constructor(initBalances) {
-        this.balances = {};
-        this.loadBalances(initBalances);
-    }
+const BinanceApiClient = require('./core/api');
+const BinanceWebSocketClient = require('./core/websocket');
+const Balance = require('./core/balance');
+const createLogger = require('./core/logger');
 
-    loadBalances(newBlances = []) {
-        for (const balance of Object.values(newBlances)) {
-            const sum = parseFloat(balance.free) - parseFloat(balance.locked);
-            if (sum > 0) {
-                this.balances[balance.asset] = sum;
-            }
-        }
-    }
+const { apiKey, apiSecret } = require('./secrets');
 
-    getBalances() {
-        return JSON.stringify(this.balances);
-    }
-}
+const convertEventAccountBalance = (data) => {
+    return data.map(balance => ({
+        asset: balance.a,
+        free: balance.f,
+        locked: balance.l,
+    }));
+};
 
-module.exports = Balance
+/**
+ * Show balance and subscribe on balance update
+ */
+ const showBalance = async () => {
+    const logger = createLogger('Balance');
+
+    const renewlistenKeyInterval = 60 * 60 * 1000; // 1 hour
+
+    const apiClient = new BinanceApiClient({
+        apiKey,
+        apiSecret,
+        baseUrl: 'https://testnet.binance.vision',
+        logger,
+    });
+    
+    const wsClient = new BinanceWebSocketClient({
+        wsUrl: 'wss://testnet.binance.vision',
+        logger,
+    });
+
+    const accountData = await apiClient.getAccountData();
+    const balance = new Balance(accountData.balances);  
+    logger.info(balance.getBalances());  
+
+    const balanceChangeHanlder = (data) => {
+        balance.loadBalances(convertEventAccountBalance(data.B));
+        logger.info(balance.getBalances());
+    };
+    
+    const subscribe = async () => {
+        logger.info('Renew listenKey');
+
+        const listenKey = await apiClient.issueListenKey();
+
+        return wsClient.subscribeOnAccountChange(
+            listenKey,
+            balanceChangeHanlder
+        )
+    };
+
+    let wsRef = subscribe();
+
+    setInterval(async () => {
+        wsRef.unsubscribe();
+        wsRef = subscribe();
+    }, renewlistenKeyInterval);
+};
+
+module.exports = showBalance;

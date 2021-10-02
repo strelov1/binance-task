@@ -2,9 +2,14 @@
   "name": "binance-task",
   "version": "1.0.0",
   "description": "Binance test task",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "balance": "bin/balance.js",
+    "order": "bin/order.js",
+    "trades": "bin/trades.js"
   },
   "repository": {
     "type": "git",

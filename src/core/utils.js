@@ -8,15 +8,6 @@ const buildQuery = (params = {}) => {
       .join('&');
 };
 
-const convertEventAccountBalance = (data) => {
-    return data.map(balance => ({
-        asset: balance.a,
-        free: balance.f,
-        locked: balance.l,
-    }));
-}
-
 module.exports = {
-    buildQuery,
-    convertEventAccountBalance
+    buildQuery
 };

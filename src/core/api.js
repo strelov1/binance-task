@@ -60,7 +60,7 @@ class BinanceApi {
           );
     }
 
-    newOrder(symbol, side, type, options = {}) {
+    createNewOrder(symbol, side, type, options = {}) {
         return this.sendPrivateRequest(
             'POST',
             '/api/v3/order',

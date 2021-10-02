@@ -19,14 +19,28 @@
 
 ## Install
   - Run init script
+
     ```sh
-      make init
+    make init
     ```
   - Setup `apiKey` and `apiSecret` to `src/secrets.js`
 
 ## Using
-Show
-```sh
-  ./bin/balance.js
-```
+ - Show actual balance
+
+    ```sh
+    ./bin/balance.js
+    ```
+
+ - Show trades with the highest volume pairs in the last 24h
+
+    ```sh
+    ./bin/trades.js
+    ```
+
+ - Create order (to demonstrate the balance update) 
+
+    ```sh
+    ./bin/order.js
+    ```
 

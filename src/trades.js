@@ -40,7 +40,7 @@ const getHighestVolumePairs = (allPairs, limit = 10, offset = 0) => {
 const highestVolumeTradesWatcher = async () => {
     const logger = createLogger('Trades');
 
-    const api = new BinanceApiClient({
+    const apiClient = new BinanceApiClient({
         apiKey,
         baseUrl: 'https://api.binance.com',
         logger
@@ -58,7 +58,7 @@ const highestVolumeTradesWatcher = async () => {
     const showStatMonitorTime = 60 * 1000; // 1m
     
     logger.info(`Getting all trade pairs in the last 24h...`);
-    const { data: allPairs } = await api.getTicker24hr();
+    const { data: allPairs } = await apiClient.getTicker24hr();
     const highestVolumePairs = getHighestVolumePairs(allPairs, highestVolumePairLimit);
 
     highestVolumePairs.forEach(pair => {

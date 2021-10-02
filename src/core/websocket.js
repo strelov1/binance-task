@@ -16,7 +16,7 @@ class BinanceWebSocketClient {
         ws.on('message', hanlder);
 
         ws.on('error', err => {
-            this.logger.info(err);
+            this.logger.error(err);
         });
 
         ws.on('close', (code) => {

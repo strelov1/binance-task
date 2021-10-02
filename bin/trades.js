@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { highestVolumeTrades } = require('../src/index');
+const { highestVolumeTradesWatcher } = require('../src/index');
 
-highestVolumeTrades();
+highestVolumeTradesWatcher();

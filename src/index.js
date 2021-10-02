@@ -1,9 +1,9 @@
-const showBalance = require('./balance');
+const balanceWatcher = require('./balance');
+const highestVolumeTradesWatcher = require('./trades');
 const createOrder = require('./order');
-const highestVolumeTrades = require('./trades');
 
 module.exports = {
-    showBalance,
+    balanceWatcher,
+    highestVolumeTradesWatcher,
     createOrder,
-    highestVolumeTrades
 };

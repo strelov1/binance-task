@@ -5,7 +5,7 @@ const createLogger = require('./core/logger');
 
 const { apiKey, apiSecret } = require('./secrets');
 
-const convertEventAccountBalance = (data) => {
+const convertEventToAccountBalance = (data) => {
     return data.map(balance => ({
         asset: balance.a,
         free: balance.f,
@@ -16,7 +16,7 @@ const convertEventAccountBalance = (data) => {
 /**
  * Show balance and subscribe on balance update
  */
- const showBalance = async () => {
+ const balanceWatcher = async () => {
     const logger = createLogger('Balance');
 
     const renewlistenKeyInterval = 60 * 60 * 1000; // 1 hour
@@ -38,7 +38,7 @@ const convertEventAccountBalance = (data) => {
     logger.info(balance.getBalances());  
 
     const balanceChangeHanlder = (data) => {
-        balance.loadBalances(convertEventAccountBalance(data.B));
+        balance.loadBalances(convertEventToAccountBalance(data.B));
         logger.info(balance.getBalances());
     };
     
@@ -61,4 +61,4 @@ const convertEventAccountBalance = (data) => {
     }, renewlistenKeyInterval);
 };
 
-module.exports = showBalance;
+module.exports = balanceWatcher;

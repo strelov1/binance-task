@@ -18,7 +18,15 @@
   - Measure event time => client receive time latency and log (min/mean/max) to console every 1 minute
 
 ## Install
-  ```sh
-    make init
-  ```
-  After init setup apiKey and apiSecret to secret.js file
+  - Run init script
+    ```sh
+      make init
+    ```
+  - Setup `apiKey` and `apiSecret` to `src/secrets.js`
+
+## Using
+Show
+```sh
+  ./bin/balance.js
+```
+

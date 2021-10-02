@@ -30,6 +30,11 @@ class Monitor {
     getStats() {
         const { latencies } = this;
         const count = latencies.length;
+
+        if (!count) {
+            throw new Error('No stats');
+        }
+
         const min = Math.min(...latencies);
         const max = Math.max(...latencies);
         const sum = latencies.reduce((acc, curr) => acc + curr);
@@ -40,7 +45,7 @@ class Monitor {
             min: Math.round(min),
             max: Math.round(max),
             mean: Math.round(sum / count)
-         };
+        };
     }
 }
 

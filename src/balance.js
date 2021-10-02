@@ -34,12 +34,10 @@ const convertEventToAccountBalance = (data) => {
     });
 
     const accountData = await apiClient.getAccountData();
-    const balance = new Balance(accountData.balances);  
-    logger.info(balance.getBalances());  
+    const balance = new Balance(accountData.balances, { logger });
 
     const balanceChangeHanlder = (data) => {
         balance.loadBalances(convertEventToAccountBalance(data.B));
-        logger.info(balance.getBalances());
     };
     
     const subscribe = async () => {
@@ -53,11 +51,11 @@ const convertEventToAccountBalance = (data) => {
         )
     };
 
-    let wsRef = subscribe();
+    let wsRef = await subscribe();
 
     setInterval(async () => {
         wsRef.unsubscribe();
-        wsRef = subscribe();
+        wsRef = await subscribe();
     }, renewlistenKeyInterval);
 };
 

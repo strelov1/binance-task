@@ -1,5 +1,11 @@
+const formatedBalances = (balances) => {
+    return Object.entries(balances)
+        .map(([asset, amount]) => `${asset}: ${amount}`)
+        .join(' | ');
+}
 class Balance {
-    constructor(initBalances) {
+    constructor(initBalances, options = {}) {
+        this.logger = options.logger || console;
         this.balances = {};
         this.loadBalances(initBalances);
     }
@@ -11,10 +17,12 @@ class Balance {
                 this.balances[balance.asset] = currentSum;
             }
         }
+        const formatedBalance = formatedBalances(this.getBalances());
+        this.logger.info(`Update: ${formatedBalance}`);
     }
 
     getBalances() {
-        return JSON.stringify(this.balances);
+        return this.balances;
     }
 }
 

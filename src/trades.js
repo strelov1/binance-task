@@ -60,21 +60,15 @@ const highestVolumeTradesWatcher = async () => {
     const { data: allPairs } = await apiClient.getTicker24hr();
     const highestVolumePairs = getHighestVolumePairs(allPairs, highestVolumePairLimit);
 
-    let wsRefs = [];
     highestVolumePairs.forEach(pair => {
-        const ref = wsClient.trade(pair, (response) => {
+        wsClient.trade(pair, (response) => {
             const event = JSON.parse(response);
             logger.info(`${event.s} | ${event.p} ${event.q} ${event.E}`);
             const eventTime = parseInt(event.E);
             monitor.register(eventTime);
         });
-        wsRefs.push(ref);
     });
 
-    setTimeout(() => {
-        wsRefs.forEach((ref) => ref.unsubscribe());
-    }, 5000);
-    
     setInterval(() => {
         try {
             const { min, max, mean } = monitor.getStats();

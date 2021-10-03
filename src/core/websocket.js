@@ -1,29 +1,59 @@
 const WebSocketClient = require('ws');
 
+class AutoReconnectWebSocket {
+    constructor(url, hanlder, options = {}) {
+        this.logger = options.logger || console;
+        this.autoReconnect = options.autoReconnect === undefined ? true : options.autoReconnect;
+        this.autoReconnectDelay = this.autoReconnectDelay | 1000;
+        this.unsubscribed = false;
+        this.subscribe(url, hanlder);
+    }
+
+    subscribe(url, hanlder) {
+        this.ws = new WebSocketClient(url);
+        this.ws.on('open', () => {
+            this.logger.info('Subscribe on socket');
+        });
+        
+        this.ws.on('message', hanlder);
+
+        this.ws.on('error', err => {
+            this.logger.error(err);
+        });
+
+        this.ws.on('close', (code) => {
+            this.logger.info(`Socket connection close: ${code}`);
+            if (this.autoReconnect && !this.unsubscribed) {
+                setTimeout(() => {
+                    this.logger.error(`Reconnection...`);
+                    this.subscribe(url, hanlder);
+                }, this.autoReconnectDelay);
+            }
+        });
+    }
+
+    unsubscribe() {
+        this.unsubscribed = true;
+        this.ws.close();
+    }
+}
 class BinanceWebSocketClient {
     constructor(options = {}) {
         this.wsUrl = options.wsUrl || `wss://stream.binance.com:9443`;
         this.logger = options.logger || console;
+        this.autoReconnect = options.autoReconnect ;
+        this.autoReconnectDelay = options.autoReconnectDelay;
     }
 
     subscribe(url, hanlder) {
-        const ws = new WebSocketClient(url);
-
-        ws.on('open', () => {
-            this.logger.info('Subscribe on socket');
+        const ws = new AutoReconnectWebSocket(url, hanlder, {
+            logger: this.logger,
+            autoReconnect: this.autoReconnect,
+            autoReconnectDelay: this.autoReconnectDelay,
         });
-        
-        ws.on('message', hanlder);
-
-        ws.on('error', err => {
-            this.logger.error(err);
-        });
-
-        ws.on('close', (code) => {
-            this.logger.info(`Socket connection close: ${code}`);
-        });
-
-        return { unsubscribe: () => ws.close() };
+        return { 
+            unsubscribe: () => ws.unsubscribe()
+        };
     }
 
     userData(listenKey, hanlder) {
@@ -40,7 +70,7 @@ class BinanceWebSocketClient {
         });
     }
 
-    tradeWS(symbol, hanlder) {
+    trade(symbol, hanlder) {
         const url = `${this.wsUrl}/ws/${symbol.toLowerCase()}@trade`
         return this.subscribe(url, hanlder);
     }
